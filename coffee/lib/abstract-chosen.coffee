@@ -43,6 +43,7 @@ class AbstractChosen
     @create_option = @options.create_option || false
     @persistent_create_option = @options.persistent_create_option || false
     @skip_no_results = @options.skip_no_results || false
+    @normalize_search_text = @options.normalize_search_text || (search_text) -> search_text
 
   set_default_text: ->
     if @form_field.getAttribute("data-placeholder")
@@ -183,7 +184,8 @@ class AbstractChosen
     match_value = false
 
     query = this.get_search_text()
-    escaped_query = query.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+    normalizedQuery = this.normalize_search_text(query);
+    escaped_query = normalizedQuery.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
     regex = this.get_search_regex(escaped_query)
     exact_regex = new RegExp("^#{escaped_query}$")
     highlight_regex = this.get_highlight_regex(escaped_query)
@@ -209,7 +211,8 @@ class AbstractChosen
         text = if option.group then option.label else option.text
 
         unless option.group and not @group_search
-          search_match = this.search_string_match(text, regex)
+          normalized_text = this.normalize_search_text(text)
+          search_match = this.search_string_match(normalized_text, regex)
           option.search_match = search_match?
 
           if not option.search_match and @search_in_values
@@ -223,9 +226,34 @@ class AbstractChosen
           if option.search_match
             if query.length and not match_value
               startpos = search_match.index
+              endpos = query.length
+
+              # If any normalization changed the search_text, perform a better
+              # logic to highlight results
+              if normalized_text != text
+
+                # Search from the beginning where it stops to match
+                last_normalized_text = normalized_text
+                offset = 0
+                for i in [0..text.length - 1] by 1
+                  substr_normalized_text = this.normalize_search_text(text.substr(i))
+                  if last_normalized_text == substr_normalized_text
+                    offset++
+                  last_normalized_text = substr_normalized_text
+                  if regex.test(substr_normalized_text) is false
+                    startpos = i - offset
+                    break
+
+                # Search from the end where it starts to match
+                for i in [1..text.length - startpos] by 1
+                  substr_normalized_text = this.normalize_search_text(text.substr(startpos, i))
+                  if regex.test(substr_normalized_text) isnt false
+                    endpos = i
+                    break
+
               prefix = text.slice(0, startpos)
-              fix    = text.slice(startpos, startpos + query.length)
-              suffix = text.slice(startpos + query.length)
+              fix    = text.slice(startpos, startpos + endpos)
+              suffix = text.slice(startpos + endpos)
               option.highlighted_html = "#{this.escape_html(prefix)}<em>#{this.escape_html(fix)}</em>#{this.escape_html(suffix)}"
 
             results_group.group_match = true if results_group?
