@@ -1,5 +1,6 @@
 chosen*.zip
-node_modules
+node_modules/
+vendor/
 _SpecRunner.html
 spec/public
 .buildpath
