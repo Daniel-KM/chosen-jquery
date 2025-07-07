@@ -89,5 +89,8 @@
       "chosen.css",
       "chosen.min.css"
     ]
+  },
+  "dependencies": {
+    "transliteration": "^2.3.5"
   }
 }
