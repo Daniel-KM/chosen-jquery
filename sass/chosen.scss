@@ -79,19 +79,32 @@ $chosen-selected-color: #e0e0e0;
 		}
 	}
 
+	// The close button uses <button> for accessibility.
+	// Reset properties that CSS frameworks may set on generic <button> elements.
 	.search-choice-close {
 		position: absolute;
 		right: 3px;
 		top: 0;
 		bottom: 0;
 		margin: auto;
+		padding: 0;
 		border: none;
+		border-radius: 0;
 		cursor: pointer;
 		display: block;
 		width: 15px;
 		height: 15px;
+		min-height: 0;
+		min-width: 0;
 		background: $chosen-clear no-repeat right 0 top 50%;
+		background-color: transparent;
 		background-size: 15px 15px;
+		box-shadow: none;
+		font-size: 0;
+		color: transparent;
+		overflow: hidden;
+		line-height: 0;
+		appearance: none;
 
 		&:hover,
 		&:active {
@@ -452,6 +465,19 @@ $chosen-selected-color: #e0e0e0;
 			text-decoration: none;
 		}
 	}
+}
+/* @end */
+
+/* @group Sortable (drag-and-drop reordering for multiselect) */
+.chosen-container-multi .chosen-choices .search-choice {
+	cursor: grab;
+
+	&:active {
+		cursor: grabbing;
+	}
+}
+.chosen-sortable-ghost {
+	opacity: 0.4;
 }
 /* @end */
 
