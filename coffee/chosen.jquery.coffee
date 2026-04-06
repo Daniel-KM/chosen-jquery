@@ -172,7 +172,7 @@ class Chosen extends AbstractChosen
       this.activate_field()
 
   container_mouseup: (evt) ->
-    if not @is_disabled and @allow_single_deselect and $(evt.target).hasClass('search-choice-close')
+    if not @is_disabled and not @is_multiple and @allow_single_deselect and $(evt.target).hasClass('search-choice-close')
       this.results_reset(evt)
 
   search_results_mousewheel: (evt) ->
