@@ -401,6 +401,7 @@ $chosen-selected-color: #e0e0e0;
 
 /* @group Active  */
 .chosen-container-active {
+	outline: auto;
 
 	&.chosen-with-drop {
 		.chosen-single,
