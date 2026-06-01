@@ -387,6 +387,14 @@ $chosen-selected-color: #e0e0e0;
 		.chosen-single {
 			z-index: 1010
 		}
+
+		// Keep multiple selects dropping down, avoiding constraint on top and bottom.
+		.chosen-drop {
+			top: 100%;
+			bottom: auto;
+			border-width: 0 1px 1px 1px;
+			border-radius: 0 0 4px 4px;
+		}
 	}
 }
 /* @end */
